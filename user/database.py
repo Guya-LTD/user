@@ -41,10 +41,10 @@ This module provides means to perform operations on the database.
 """
 
 from flask import Flask
-
+from flask_sqlalchemy import SQLAlchemy
 
 # global vars
-
+db = SQLAlchemy()
 
 def init(app: Flask) -> None:
     """This function initialize the datase ORM/ODM, providing a session
@@ -54,4 +54,4 @@ def init(app: Flask) -> None:
     ----------    
         app (flask.app.Flask): The application instance.
     """
-    pass
+    db.init_app(app)

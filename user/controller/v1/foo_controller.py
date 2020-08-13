@@ -224,6 +224,16 @@ class FoosResource(Resource):
 
         """
 
+        from user.database import db
+
+        class Result(db.Model):
+            __tablename__ = 'results'
+
+            id = db.Column(db.Integer, primary_key=True)
+            url = db.Column(db.String())
+ 
+        return db.session.query(Result).count()
+
 
     @namespace.expect(FooDto.request, validate = True)
     def post(self):
