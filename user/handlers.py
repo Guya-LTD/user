@@ -32,8 +32,11 @@ Project
 
 
 from flask import jsonify
+from sqlalchemy import exc
 from werkzeug.exceptions import HTTPException, default_exceptions
 
+
+from .log import log_exception
 
 def register_handler(app):
     """Registers the error handler is a function to common error HTTP codes
@@ -42,6 +45,12 @@ def register_handler(app):
     ----------
         app (flask.app.Flask): The application instance.
     """
+
+    ################################################################
+    #                                                              #
+    # generic error handlers                                       #
+    #                                                              #
+    ################################################################
     
     def generic_http_error_handler(error):
         """Deal with HTTP exceptions.
@@ -72,6 +81,44 @@ def register_handler(app):
         resp.status_code = result['code']
         return resp
 
+
+    # sqlaclhemy generic error handler
+    def generic_sqlalchemy_error_handler(error):
+        """Deal with mongoengine exceptions.
+
+        Parameters:
+        ----------
+            error (r.RedisError): Core exceptions raised by the Redis client.
+
+            code int: An HTTP status code.
+
+        Returns:
+        -------
+            A flask response object.
+        """
+        # formatting the exception
+        result = {
+            'code': 500, 
+            'description': 'Internal Server Error', 
+            'type': 'exc.SQLAlchemyError',
+            'message': str(error)}
+
+        # logg exception
+        log_exception(error = error, extra = result)
+        resp = jsonify(result)
+        resp.status_code = 500
+        return resp
+
+    ################################################################
+    #                                                              #
+    # register exception handlers to flask                         #
+    #                                                              #
+    ################################################################
+
     # register http code errors
     for code in default_exceptions.keys():
         app.register_error_handler(code, generic_http_error_handler)
+
+
+    #
+    app.register_error_handler(exc.SQLAlchemyError, generic_sqlalchemy_error_handler)
