@@ -18,6 +18,6 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - "5300:${POSTGRES_PORT}"
+      - "2000:${POSTGRES_PORT}"
     networks:
       - user

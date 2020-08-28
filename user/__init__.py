@@ -52,7 +52,7 @@ from .handlers import register_handler
 
 # import all controllers
 from user.controller.v1 import foo_controller
-
+from .database import migrate
 # const vars
 __version__ = '0.0.1'
 __email__ = 'simonbelete@gmail.com'

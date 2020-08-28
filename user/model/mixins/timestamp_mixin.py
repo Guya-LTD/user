@@ -27,26 +27,27 @@ Project
         - User Service for Guya
 """
 
-import factory
-import factory.fuzzy
+"""Mixins Meta Model,Genearal behaviour models."""
 
-from .postgres_engine import Session
-from user.model.user import User
+"""Mixins Meta Model, Genearal behaviour models."""
+
+import datetime
+from user.database import db 
 
 
-class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
+class TimestampMixin(object):
+    """Time Stamped Mixin
 
-    class Meta:
-        model = User
-        # Use the not-so-global scoped_session
-        # Warning: DO NOT USE common.Session()!
-        sqlalchemy_session = Session
-        sqlalchemy_session_persistence = "commit"
+    Attributes
+    ----------
+    created_at : DateTime
 
-    name = factory.Faker('name')
+    updated_at : DateTime
 
-    email = factory.Faker('email')
 
-    pnum = factory.fuzzy.FuzzyText(length = 9, prefix = '+251', chars = '0123456789')
+    """
 
-    created_by = 15
+    created_at = db.Column(db.DateTime, nullable = False, default = datetime.datetime.utcnow)
+
+
+    updated_at = db.Column(db.DateTime, nullable = True, default = datetime.datetime.utcnow)

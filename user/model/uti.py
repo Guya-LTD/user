@@ -27,26 +27,28 @@ Project
         - User Service for Guya
 """
 
-import factory
-import factory.fuzzy
+from user.database import db
 
-from .postgres_engine import Session
-from user.model.user import User
+from .mixins.base_mixin import BaseMixin
+from .mixins.timestamp_mixin import TimestampMixin
 
 
-class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
+class Utis(db.Model, BaseMixin, TimestampMixin):
+    """User ORM
+    
+    ...
 
-    class Meta:
-        model = User
-        # Use the not-so-global scoped_session
-        # Warning: DO NOT USE common.Session()!
-        sqlalchemy_session = Session
-        sqlalchemy_session_persistence = "commit"
+    Attributes
+    ----------
+    __tablename__ : String
+        Table Name
 
-    name = factory.Faker('name')
+    user_id: int
 
-    email = factory.Faker('email')
+    otis: array 
+        One time identity
+    """
 
-    pnum = factory.fuzzy.FuzzyText(length = 9, prefix = '+251', chars = '0123456789')
+    __tablename__ = 'otis'
 
-    created_by = 15
+    user_id = db.Column(db.Integer())

@@ -27,26 +27,27 @@ Project
         - User Service for Guya
 """
 
-import factory
-import factory.fuzzy
-
-from .postgres_engine import Session
-from user.model.user import User
+from user.database import db
 
 
-class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
+from .mixins.base_mixin import BaseMixin
+from .mixins.timestamp_mixin import TimestampMixin
+from .mixins.user_mixin import UserMixin
 
-    class Meta:
-        model = User
-        # Use the not-so-global scoped_session
-        # Warning: DO NOT USE common.Session()!
-        sqlalchemy_session = Session
-        sqlalchemy_session_persistence = "commit"
 
-    name = factory.Faker('name')
+class PermissionRoles(db.Model, BaseMixin, TimestampMixin, UserMixin):
+    """Permission ORM
 
-    email = factory.Faker('email')
+    ...
 
-    pnum = factory.fuzzy.FuzzyText(length = 9, prefix = '+251', chars = '0123456789')
+    Attributes
+    ----------
+    __tablename__ : String
+        Table Name
+    """
 
-    created_by = 15
+    __tablename__ = 'permission_roles'
+
+    permission_id = db.Column(db.String(), nullable = False)
+
+    role_id = db.Column(db.String(), nullable = False)

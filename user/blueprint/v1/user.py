@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Copyright Header Details
 
 Copyright
@@ -27,26 +25,24 @@ Project
         - User Service for Guya
 """
 
-import factory
-import factory.fuzzy
 
-from .postgres_engine import Session
-from user.model.user import User
+"""Package details
+
+Application features:
+--------------------
+    Python 3.7
+    Flask
+    PEP-8 for code style
 
 
-class UserFactory(factory.alchemy.SQLAlchemyModelFactory):
+Blueprint to organize and group, views related
+to the '/foo' endpoint of HTTP REST API.
+"""
 
-    class Meta:
-        model = User
-        # Use the not-so-global scoped_session
-        # Warning: DO NOT USE common.Session()!
-        sqlalchemy_session = Session
-        sqlalchemy_session_persistence = "commit"
+from flask_restplus import Namespace
 
-    name = factory.Faker('name')
+from . import api
 
-    email = factory.Faker('email')
+namespace = Namespace('User', description = 'User')
 
-    pnum = factory.fuzzy.FuzzyText(length = 9, prefix = '+251', chars = '0123456789')
-
-    created_by = 15
+api.add_namespace(namespace, path = '/users')

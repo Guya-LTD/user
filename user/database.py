@@ -41,10 +41,13 @@ This module provides means to perform operations on the database.
 """
 
 from flask import Flask
+from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 
 # global vars
 db = SQLAlchemy()
+
+migrate = Migrate()
 
 def init(app: Flask) -> None:
     """This function initialize the datase ORM/ODM, providing a session
@@ -54,4 +57,11 @@ def init(app: Flask) -> None:
     ----------    
         app (flask.app.Flask): The application instance.
     """
+    
     db.init_app(app)
+
+    migrate.init_app(app, db)
+
+    import user.model
+    
+    db.create_all()
