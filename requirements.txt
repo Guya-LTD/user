@@ -1,7 +1,5 @@
 pathlib
-commitizen
-semantic_release
-pre-commit
+waitress
 python-dotenv
 flask
 Flask-Script

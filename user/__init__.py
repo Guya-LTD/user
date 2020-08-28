@@ -101,7 +101,7 @@ def load_config(app: Flask) -> None:
         test_config (dict):
     """
 
-    app.config.from_object(config_by_name[os.getenv('ENV')])
+    app.config.from_object(config_by_name[os.getenv('ENV', 'prod')])
 
 
 def init_database(app) -> None:

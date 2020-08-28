@@ -30,6 +30,8 @@ Project
 load the settings according to the running environment. """
 
 import os
+from dotenv import load_dotenv
+
 
 
 class Config:
@@ -40,6 +42,8 @@ class Config:
         SQLALCHEMY_TRACK_MODIFICATIONS (boolean): signals to get notified
         before and after changes are committed to the database.
     """
+
+    load_dotenv()
 
     DEBUG = False
     
