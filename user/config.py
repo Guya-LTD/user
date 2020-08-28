@@ -86,6 +86,8 @@ class TestConfig(Config):
 
     TESTING = True
 
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_TEST_URI')
+
 
 config_by_name = dict(
     dev=DevConfig,
