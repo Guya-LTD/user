@@ -15,8 +15,8 @@ install:
 before_script:
   - cp .env.example .env
   - psql -c 'create database travis_ci_test;' -U postgres
-  - rm -R migrations/
-  - flask db init
+  #- rm -R migrations/
+  #- flask db init
   - flask db migrate
   - flask db upgrade
 
