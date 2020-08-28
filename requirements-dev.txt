@@ -7,3 +7,4 @@ python-semantic-release
 faker
 pytest
 pytest-dotenv
+factory_boy

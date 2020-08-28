@@ -5,12 +5,16 @@ language: python
 python:
   - 3.7
 
+services:
+  - postgresql
+
 install:
   #- pip install tox-travis
   - pip install -r requirements-dev.txt
 
 before_script:
   - cp .env.example .env
+  - psql -c 'create database travis_ci_test;' -U postgres
 
 script:
   - pytest
