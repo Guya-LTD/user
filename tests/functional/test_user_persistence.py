@@ -31,6 +31,7 @@ import pytest
 from faker import Faker
 
 from .factory.user_factory import UserFactory, Session
+from .factory.credential_factory import CredentialFactory
 
 
 class TestUserPersistence():
@@ -43,6 +44,7 @@ class TestUserPersistence():
 
     def test_creation(self):
         user = UserFactory()
+        user.credential = CredentialFactory()
         assert user.id != None
 
     def test_name_with_empty_string(self):

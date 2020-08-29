@@ -73,6 +73,8 @@ class User(db.Model, BaseMixin, UserMixin, TimestampMixin):
 
     pnum = db.Column(db.String(13), unique = True, nullable = True)
 
+    credential = db.relationship('Credential', uselist=False, back_populates='user')
+
     @validates('name')
     def validate_name(self, key, value):
         if not re.match(self.__name_pattern, value):

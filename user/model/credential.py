@@ -33,7 +33,7 @@ from .mixins.base_mixin import BaseMixin
 from .mixins.timestamp_mixin import TimestampMixin
 
 
-class Credentials(db.Modle, BaseMixin, TimestampMixin):
+class Credential(db.Model, BaseMixin, TimestampMixin):
     """Credentials ORM
 
     ...
@@ -45,7 +45,8 @@ class Credentials(db.Modle, BaseMixin, TimestampMixin):
 
     user_id : Integer
 
-    email : String
+    identity : String
+        Login email or phone number
 
     password : String
 
@@ -55,16 +56,17 @@ class Credentials(db.Modle, BaseMixin, TimestampMixin):
 
     """
 
-    __tablename__ = 'credentials'
+    __tablename__ = 'credential'
 
 
-    user_id = db.Column(db.Integer(), unique = True, nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    user = db.relationship('User', back_populates='credential')
+
+    identity = db.Column(db.String(), unique = True, nullable = False)
 
     password = db.Column(db.String(), unique = False, nullable = True)
 
-
     blocked = db.Column(db.Boolean())
-
 
     note = db.Column(db.Text(), nullable = True)
