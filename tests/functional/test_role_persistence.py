@@ -27,27 +27,20 @@ Project
         - User Service for Guya
 """
 
-from user.database import db
+import pytest
+from faker import Faker
+
+from .factory.role_factory import RoleFactory, Session
 
 
-from .mixins.base_mixin import BaseMixin
-from .mixins.timestamp_mixin import TimestampMixin
-from .mixins.user_mixin import UserMixin
+class TestRoleFactory():
 
+    def setup_class(self):
+        # Prepeare a new clean session
+        self.session = Session()
+        # init faker object
+        self.faker = Faker()
 
-class Role(db.Model, BaseMixin, TimestampMixin, UserMixin):
-    """Permission ORM
-
-    ...
-
-    Attributes
-    ----------
-    __tablename__ : String
-        Table Name
-    """
-
-    __tablename__ = 'roles'
-
-    name = db.Column(db.String(), unique = True, nullable = False)
-
-    uti = db.Column(db.String(), unique = True, nullable = False)
+    def test_role_creation(self):
+        role = RoleFactory()
+        assert role.id != None
