@@ -35,7 +35,7 @@ from .mixins.timestamp_mixin import TimestampMixin
 from .mixins.user_mixin import UserMixin
 
 
-class PermissionRoles(db.Model, BaseMixin, TimestampMixin, UserMixin):
+class PermissionRole(db.Model, BaseMixin, TimestampMixin, UserMixin):
     """Permission ORM
 
     ...

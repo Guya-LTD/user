@@ -27,34 +27,20 @@ Project
         - User Service for Guya
 """
 
-from user.database import db
+import pytest
+from faker import Faker
 
+from .factory.permission_factory import PermissionFactory, Session
 
-from .mixins.base_mixin import BaseMixin
-from .mixins.timestamp_mixin import TimestampMixin
-from .mixins.user_mixin import UserMixin
+class TestPermissionPersistence():
 
+    def setup_class(self):
+        # Prepeare a new, clean session
+        self.session = Session()
+        # init faker object
+        self.faker = Faker()
 
-class Permission(db.Model, BaseMixin, TimestampMixin, UserMixin):
-    """Permission ORM
-
-    ...
-
-    Attributes
-    ----------
-    __tablename__ : String
-        Table Name
-    """
-
-    __tablename__ = 'permissions'
-
-    name = db.Column(db.String(), unique = True, nullable = False)
-
-    create = db.Column(db.Boolean())
-
-    read = db.Column(db.Boolean())
-
-    update = db.Column(db.Boolean())
-
-    delete = db.Column(db.Boolean())
+    def test_permission_creation(self):
+        permission = PermissionFactory()
+        assert permission.id != None
 
