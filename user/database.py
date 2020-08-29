@@ -62,6 +62,6 @@ def init(app: Flask) -> None:
 
     migrate.init_app(app, db)
 
-    #import user.model
+    import user.model
     
     db.create_all()
