@@ -54,7 +54,7 @@ from .handlers import register_handler
 from user.controller.v1 import *
 
 # const vars
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 __email__ = 'simonbelete@gmail.com'
 __title__ = 'User Service'
 __author__ = 'Simon Belete'
