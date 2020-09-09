@@ -1,5 +1,6 @@
 # local
 ven/
+.docker/postgres/data/
 
 # Python vertual environment
 bin/

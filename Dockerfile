@@ -4,6 +4,9 @@ FROM python:3.7-alpine
 RUN apk update
 RUN apk add git
 
+# install pyconfig
+RUN apk add postgresql-dev gcc python3-dev musl-dev
+
 # workdir
 ENV WORK_DIR /usr/src/app
 WORKDIR ${WORK_DIR}

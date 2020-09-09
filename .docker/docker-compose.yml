@@ -17,6 +17,8 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - './postgres/data:/var/lib/postgresql/data'
     ports:
       - "2000:${POSTGRES_PORT}"
     networks:
