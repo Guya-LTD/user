@@ -35,7 +35,7 @@ from .mixins.timestamp_mixin import TimestampMixin
 from .mixins.user_mixin import UserMixin
 
 
-class UserRoles(db.Model, BaseMixin, TimestampMixin, UserMixin):
+class UserRole(db.Model, BaseMixin, TimestampMixin, UserMixin):
     """Permission ORM
 
     ...
@@ -48,7 +48,11 @@ class UserRoles(db.Model, BaseMixin, TimestampMixin, UserMixin):
 
     __tablename__ = 'user_roles'
 
-    user_id = db.Column(db.String(), nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    #user = db.relationship('User', back_populates='user_roles')
 
     role_id = db.Column(db.String(), nullable = False)
+
+    role = db.relationship('Role', back_populates='user_roles')
 

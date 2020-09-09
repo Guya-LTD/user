@@ -27,6 +27,20 @@ Project
         - User Service for Guya
 """
 
-import pytest
 
-from user.model.user import User
+"""Package details
+
+Application features:
+--------------------
+    Python 3.7
+    Flask
+    PEP-8 for code style
+
+
+This module provides means to perform operations on the serializer.
+
+"""
+
+from flask_marshmallow import Marshmallow
+
+ma = Marshmallow()

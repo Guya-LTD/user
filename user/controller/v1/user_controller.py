@@ -224,6 +224,99 @@ class UsersResource(Resource):
 
         """
 
+        # Validate querys if existed
+        # or set them to default value
+        limit = int(request.args.get('limit', self._LIMIT))
+        page = int(request.args.get('page', 1 ))
+        offset = (page - 1) * limit
+        # last_offset = (total_page -1) * limit
+        # previous_offset = ((current_page - 1) - 1) * limit
+        # next_offset = ((current_page + 1) - 1) * limit
+
+        # Open database session
+        # fetch everything
+        # returns a Query object
+        users =  db.session.query(Users)
+        # applay filtering to Query object
+        # Filtering short url names with their corsponding mathematical symbole:
+        # eq   => equal to                 =>  `=`
+        # ne   => not equal to             =>  `!=`
+        # lt   => less than                =>  `<`
+        # lte  => less than or equal to    =>  `<=`
+        # gt   => greater than             =>  `>`
+        # gte  => greater than or equal to =>  `>=`
+        # not  => negate a standard check  =>  `neg`
+        # in   => value is in the list (a list of values should be provided)
+        # nln  => Value is not in the list (a list of values should be provided)
+        # all  => every item in the list of values provided is in array
+        filter_operators = {
+            'eq'  :  '=',
+            'ne'  :  '!=',
+            'lt'  :  '<',
+            'lte' :  '<=',
+            'gt'  :  '>',
+            'gte' :  '>='
+        }
+        # First step to get filter varables assoication type
+        # key : value
+        filters = {
+            'name' : request.args.get('name'),
+            'email' : request.args.get('email'),
+            'pnum' : request.args.get('pnum')
+        }
+        # filter through the Query object and applay the filter
+        for parent_key, parent_value in filters.items():
+            if isinstance(parent_value, dict):
+                for child_key, child_value in parent_value.items():
+                    # check if Query value is set
+                    if child_value:
+                        # split the operation from the query value
+                        splited = child_value.split(':')
+                        # check if filter operation is correct
+                        if splited[0] in filter_operators:
+                            users = users.filter(
+                                text(
+                                    "(%s->> '%s') %s '%s'"
+                                    % (parent_key, child_key, filter_operators[splited[0]], splited[1] )
+                                )
+                            )
+            else:
+                # check if value is null or note
+                if parent_value:
+                    #s plit the operation form the query value
+                    splited = parent_value.split(':')
+                    # check if filter operatior is correct
+                    if splited[0] in filter_operators:
+                        users = users.filter(
+                            text(
+                                "%s %s '%s'"
+                                % (parent_key, child_key, filter_operators[splited[0]], splited[1] )
+                            )
+                        )
+        # user results
+        # split multiple order bys
+        if request.args.get('order_by'):
+            order_bys = request.args.get('order_by').split(',')
+            for value in order_bys:
+                if value:
+                    splited = re.split('\+|-', value)
+                    qs = 1
+                    if value[0] == '+':
+                        qs = '%s %s' % (splited[1], 'ASC')
+                    elif value[0] == '-':
+                        qs = '%s %s' % (splited[1], 'DESC')
+                    #
+                    users = users.order_by(
+                        text(
+                            str(qs)
+                        )
+                    )
+        else:
+            # if there is no order Query, order by updated_at
+            users = users.order_by(
+                Users.updated_at.desc()
+            )
+
 
     @namespace.expect(UserDto.request, validate = True)
     def post(self):

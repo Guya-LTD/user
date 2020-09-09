@@ -51,3 +51,5 @@ class Role(db.Model, BaseMixin, TimestampMixin, UserMixin):
     name = db.Column(db.String(), unique = True, nullable = False)
 
     uti = db.Column(db.String(), unique = True, nullable = False)
+
+    user_role = db.relationship('UserRole')

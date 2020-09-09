@@ -27,6 +27,31 @@ Project
         - User Service for Guya
 """
 
-import pytest
+"""Marshmallow SQLAlchemy Serializer class."""
 
-from user.model.user import User
+
+from user.serializer import ma
+from user.serializer.credential_serializer import CredentialSchema
+
+
+class UserSchema(ma.Schema):
+    """Json serializer
+
+    """
+
+    credential = ma.Nested(CredentialSchema)
+
+    class Meta:
+        """ Serializable Fields
+
+        """
+
+        # Fileds to expose
+        fields = [
+            'name',
+            'email',
+            'pnum',
+            'credential'
+            'created_at',
+            'updated_at'
+        ]
