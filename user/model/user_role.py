@@ -50,9 +50,9 @@ class UserRole(db.Model, BaseMixin, TimestampMixin, UserMixin):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    #user = db.relationship('User', back_populates='user_roles')
+    user = db.relationship('User')
 
-    role_id = db.Column(db.String(), nullable = False)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
 
-    role = db.relationship('Role', back_populates='user_roles')
+    role = db.relationship('Role', back_populates='user_role')
 

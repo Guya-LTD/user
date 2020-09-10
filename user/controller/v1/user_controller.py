@@ -114,12 +114,18 @@ Functions:
 
 """
 
-
+from flask import request, jsonify, make_response
 from flask_restplus import Resource
 
+from user.database import db
 from user.dto.user_dto import UserDto
+from user.exception import ValueEmpty, DocumentDoesNotExist, InvalidPayload
 from user.blueprint.v1.user import namespace
-
+from user.serializer.user_serializer import UserSchema
+from user.model.user import User
+from user.model.credential import Credential
+from user.model.user_role import UserRole
+from user.model.role import Role
 
 @namespace.route('')
 @namespace.response(100, 'Continue')
@@ -209,6 +215,8 @@ class UsersResource(Resource):
 
     """
 
+    _LIMIT = 10
+
     def get(self):
         """Get All/Semi datas from database
 
@@ -236,7 +244,7 @@ class UsersResource(Resource):
         # Open database session
         # fetch everything
         # returns a Query object
-        users =  db.session.query(Users)
+        users =  db.session.query(User)
         # applay filtering to Query object
         # Filtering short url names with their corsponding mathematical symbole:
         # eq   => equal to                 =>  `=`
@@ -314,8 +322,38 @@ class UsersResource(Resource):
         else:
             # if there is no order Query, order by updated_at
             users = users.order_by(
-                Users.updated_at.desc()
+                User.updated_at.desc()
             )
+
+        # applay limit to Query object
+        users = users.offset(offset)
+        # applay paging to Query object
+        users = users.limit(limit)
+        # Create multi-value schema support
+        users_schema = UserSchema(many = True)
+        # Serialized Query inorder to send it over network
+        serialized_users = users_schema.dump(users)
+
+        # Return must always include the global fileds :
+        # Field           Datatype        Default         Description             Examples
+        # -----           --------        -------         -----------             --------
+        # code            int             201             1xx, 2xx, 3xx, 5xx
+        # description     string          Created         http code description
+        # messages        array           Null            any type of messages
+        # errors          array           Null            occured errors
+        # warnings        array           Null            can be url format
+        # datas           array/json      Null            results                 [ {Row 1}, {Row 2}, {Row 3}]
+        return make_response(jsonify({
+            'code': 200,
+            'description': 'Ok',
+            'message': '',
+            'errors': [],
+            'warnings': [],
+            'datas': serialized_users,
+            'page': page,
+            'limit': limit,
+            'total': db.session.query(User).count()
+        }), 200)
 
 
     @namespace.expect(UserDto.request, validate = True)
@@ -332,10 +370,59 @@ class UsersResource(Resource):
         # create new user
         # start by validating request fields for extra security
         # step 1 validation: strip payloads for empty string
-        
+        if not namespace.payload['name'].strip() or \
+           not namespace.payload['identity'].strip() or \
+           not namespace.payload['password'].strip() or \
+           not namespace.payload['uti']:
+           raise ValueEmpty({'payload': namespace.payload})
 
+        email = namespace.payload['email']
+        pnum = namespace.payload['pnum']
 
-@namespace.route('')
+        #if '@' in namespace.payload['identity'] or not email:
+        #    email = namespace.payload['identity']
+        #elif not pnum:
+        #    pnum = namespace.payload['identity']
+
+        # User's credential
+        credential = Credential(
+            identity = namespace.payload['identity'],
+            password = namespace.payload['password']
+        )
+
+        # User's role
+        # First check if uti exists in role and
+        # retive role id by uti
+        role = db.session.query(Role).filter_by(uti = namespace.payload['uti']).one()
+        if not role:
+            raise InvalidPayload({'payload': namespace.payload, 'invalidPayloadKeys': ['uti'], 'info': 'Uti not found in role table'})
+
+        # User's Role object
+        user_role = UserRole(
+            role_id = role.id,
+            created_by = -1
+        )
+
+        # New User object
+        user = User(
+            name = namespace.payload['name'],
+            email = email,
+            pnum = pnum,
+            role = user_role,
+            credential = credential,
+            created_by = -1
+        )
+
+        db.session.add(user)
+        #db.session.add(credential)
+        # Assign new id
+        db.session.flush()
+        # Presist to the database
+        db.session.commit()
+
+        return True
+
+@namespace.route('/<string:id>')
 @namespace.response(100, 'Continue')
 @namespace.response(101, 'Switching Protocols')
 @namespace.response(102, 'Processing')

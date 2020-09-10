@@ -36,6 +36,13 @@ from user.blueprint.v1.user import namespace
 class UserDto:
     """Request and Respons Data Transfer Object."""
 
-    request = namespace.model('user_request', {})
+    request = namespace.model('user_request', {
+        'name': fields.String(),
+        'email': fields.String(),
+        'pnum': fields.String(),
+        'identity': fields.String(),
+        'password': fields.String(),
+        'uti': fields.String()
+    })
 
     response = namespace.model('user_response', {})

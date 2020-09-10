@@ -96,6 +96,11 @@ def register_handler(app):
         -------
             A flask response object.
         """
+        from .database import db
+
+        # Rollback on session on exception
+        db.session.rollback()
+
         # formatting the exception
         result = {
             'code': 500, 

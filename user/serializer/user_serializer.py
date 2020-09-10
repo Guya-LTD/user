@@ -30,7 +30,7 @@ Project
 """Marshmallow SQLAlchemy Serializer class."""
 
 
-from user.serializer import ma
+from user.marshmallow_serializer import ma
 from user.serializer.credential_serializer import CredentialSchema
 
 

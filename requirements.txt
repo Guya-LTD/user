@@ -8,5 +8,5 @@ werkzeug~=0.16.1
 psycopg2
 Flask-SQLAlchemy
 Flask-Migrate
-marshmallow-sqlalchemy
+flask-marshmallow
 git+git://github.com/Guya-LTD/python-logstash.git#egg=python-logstash

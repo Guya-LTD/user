@@ -80,13 +80,13 @@ class User(db.Model, BaseMixin, UserMixin, TimestampMixin):
     @validates('name')
     def validate_name(self, key, value):
         if not re.match(self.__name_pattern, value):
-            raise ValueError('First Name cannot contain illegal characters VALUE => %s' % value)
+            raise ValueError('Name cannot contain illegal characters VALUE => %s' % value)
         return value
 
     @validates('email')
     def validate_email(self, key, value):
         if not '@' in value or not value.strip():
-            raise ValueError('Company Email Address must contain @ symbol or cannot be empty VALUE => %s' % value)
+            raise ValueError('Email Address must contain @ symbol or cannot be empty VALUE => %s' % value)
         else:
             return value
 
