@@ -73,7 +73,7 @@ class User(db.Model, BaseMixin, UserMixin, TimestampMixin):
 
     pnum = db.Column(db.String(13), unique = True, nullable = True)
 
-    credential = db.relationship('Credential', uselist=False, back_populates='user')
+    credential = db.relationship('Credential', uselist=False, backref="user")#, lazy = 'select', backref=db.backref('credential', lazy='joined', uselist=False))
 
     role = db.relationship('UserRole', uselist=False, back_populates='user')
 

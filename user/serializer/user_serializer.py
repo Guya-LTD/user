@@ -48,10 +48,11 @@ class UserSchema(ma.Schema):
 
         # Fileds to expose
         fields = [
+            'id',
             'name',
             'email',
             'pnum',
-            'credential'
+            'credential',
             'created_at',
             'updated_at'
         ]

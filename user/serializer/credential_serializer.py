@@ -45,6 +45,7 @@ class CredentialSchema(ma.Schema):
 
         # Fileds to expose
         fields = [
+            'id',
             'identity',
             'blocked',
             'note',

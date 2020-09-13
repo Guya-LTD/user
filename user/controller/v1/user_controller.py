@@ -245,6 +245,7 @@ class UsersResource(Resource):
         # fetch everything
         # returns a Query object
         users =  db.session.query(User)
+        #print(x.__dict__)
         # applay filtering to Query object
         # Filtering short url names with their corsponding mathematical symbole:
         # eq   => equal to                 =>  `=`
@@ -333,7 +334,7 @@ class UsersResource(Resource):
         users_schema = UserSchema(many = True)
         # Serialized Query inorder to send it over network
         serialized_users = users_schema.dump(users)
-
+        
         # Return must always include the global fileds :
         # Field           Datatype        Default         Description             Examples
         # -----           --------        -------         -----------             --------
@@ -420,7 +421,23 @@ class UsersResource(Resource):
         # Presist to the database
         db.session.commit()
 
-        return True
+        # Return must always include the global fileds :
+        # Field           Datatype        Default         Description             Examples
+        # -----           --------        -------         -----------             --------
+        # code            int             201             1xx, 2xx, 3xx, 5xx
+        # description     string          Created         http code description
+        # messages        array           Null            any type of messages
+        # errors          array           Null            occured errors
+        # warnings        array           Null            can be url format
+        # datas           array/json      Null            results                 [ {Row 1}, {Row 2}, {Row 3}]
+        return make_response(jsonify({
+            'code': 201,
+            'description': 'Created',
+            'message': '',
+            'errors': [],
+            'warnings': [],
+            'datas': {},
+        }), 200)
 
 @namespace.route('/<string:id>')
 @namespace.response(100, 'Continue')
@@ -519,7 +536,40 @@ class UserResource(Resource):
             Json Dictionaries
 
         """
+        # Open database session
+        # fetch everything
+        # returns a Query object
+        user =  db.session.query(User).get(id)
+        print(user.__dict__)
+        # Create schema support
+        users_schema = UserSchema()
+        # Serialized Query inorder to send it over network
+        serialized_users = users_schema.dump(user)
 
+        # Return must always include the global fileds :
+        # Field           Datatype        Default         Description             Examples
+        # -----           --------        -------         -----------             --------
+        # code            int             201             1xx, 2xx, 3xx, 5xx
+        # description     string          Created         http code description
+        # messages        array           Null            any type of messages
+        # errors          array           Null            occured errors
+        # warnings        array           Null            can be url format
+        # datas           array/json      Null            results                 [ {Row 1}, {Row 2}, {Row 3}]
+        code = 200
+        description = 'OK'
+
+        if not serialized_users:
+            code = 204
+            description = 'No Content'
+
+        return make_response(jsonify({
+            'code': code,
+            'description': description,
+            'message': '',
+            'errors': [],
+            'warnings': [],
+            'datas': serialized_users
+        }), code)
 
     @namespace.expect(UserDto.request, validate = True)
     def put(self, id):

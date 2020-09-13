@@ -61,7 +61,7 @@ class Credential(db.Model, BaseMixin, TimestampMixin):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    user = db.relationship('User', back_populates='credential')
+    #user = db.relationship('User', uselist=False)#, lazy = 'select', backref=db.backref('credential', lazy='joined'))
 
     identity = db.Column(db.String(), unique = True, nullable = False)
 
