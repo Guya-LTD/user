@@ -1,13 +1,13 @@
 ########################################################
 # Development build                                    #
 ########################################################
-FROM python:3.7-alpine AS development
+FROM python:3.7-slim AS development
 
 # Install git
 #RUN apt-get update
 #RUN apt-get -y install git gcc
 
-RUN apk add --no-cache git gcc
+#RUN apk add --no-cache git gcc
 
 # workdir
 ENV WORK_DIR /usr/src/app

@@ -51,7 +51,7 @@ class ValueEmpty(BadRequest):
     def __init__(self, description=None, response=None):
         desc = {
             'status_code': 400,
-            'status': 'Bad Request'
+            'status': 'Bad Request',
             'message': 'One of the payload is empty'
             }
         if description is not None:

@@ -5,8 +5,10 @@ flask
 Flask-Script
 flask-restplus
 werkzeug~=0.16.1
-psycopg2
+# psycopg2
+psycopg2-binary
 Flask-SQLAlchemy
 Flask-Migrate
 flask-marshmallow
-git+git://github.com/Guya-LTD/python-logstash.git#egg=python-logstash
+#git+git://github.com/Guya-LTD/python-logstash.git#egg=python-logstash
+https://github.com/Guya-LTD/python-logstash/archive/master.zip
