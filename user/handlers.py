@@ -65,18 +65,19 @@ def register_handler(app):
         """
         if isinstance(error, HTTPException):
             result = {
-                'code': error.code, 
-                'description': error.description, 
+                'status_code': error.code, 
+                'status': '',
+                'message': error.description, 
                 'type': 'HTTPException',
-                'message': str(error)}
+                'error': str(error.update({'type': 'HTTPException'}))}
         else:
             result = {
-                'code': 500, 
-                'description': 'Internal Server Error',
-                'type': 'Other Exceptions',
-                'message': str(error)}
+                'status_code': 500,
+                'status': 'Internal Server Error',
+                'message': error.description,
+                'error': str(error.update({'type': 'Other Exceptions'}))}
 
-        #logger.exception(str(error), extra=result.update(EXTRA))
+        logger.exception(str(error), extra=result.update(EXTRA))
         resp = jsonify(result)
         resp.status_code = result['code']
         return resp
@@ -101,12 +102,18 @@ def register_handler(app):
         # Rollback on session on exception
         db.session.rollback()
 
+        custome_error = {
+            'type': 'SQLAlchemyError',
+            'message': str(error)
+        }
+
         # formatting the exception
         result = {
-            'code': 500, 
-            'description': 'Internal Server Error', 
-            'type': 'exc.SQLAlchemyError',
-            'message': str(error)}
+            'status_code': 500, 
+            'status': 'Internal Server Error', 
+            'message': 'Sqlalchemy Error',
+            'error': custome_error
+        }
 
         # logg exception
         log_exception(error = error, extra = result)
