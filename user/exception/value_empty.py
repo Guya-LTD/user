@@ -49,7 +49,11 @@ class ValueEmpty(BadRequest):
     or server cannot handle.
     """
     def __init__(self, description=None, response=None):
-        desc = {'description': 'One of the payload is empty'}
+        desc = {
+            'status_code': 400,
+            'status': 'Bad Request'
+            'message': 'One of the payload is empty'
+            }
         if description is not None:
             desc.update(description)
         super().__init__(description=desc, response=None)

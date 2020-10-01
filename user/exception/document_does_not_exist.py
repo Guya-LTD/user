@@ -47,7 +47,11 @@ class DocumentDoesNotExist(HTTPException):
     code = 204
 
     def __init__(self, description=None, response=None):
-        desc = {'description': 'Document not found from collection'}
+        desc = {
+            'status_code': 204,
+            'status': 'No Content',
+            'message': 'Document not found from collection'
+            }
         if description is not None:
             desc.update(description)
         super().__init__(description=desc, response=None)
