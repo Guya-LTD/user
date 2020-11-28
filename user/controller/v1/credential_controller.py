@@ -243,7 +243,7 @@ class CredentialsRcesource(Resource):
         credentials = db.session.query(Credential)
 
 
-        credential = credentials.filter(identity = identtiy, password = password).one()
+        credential = credentials.filter_by(identity = identity, password = password).one()
 
         if not credential:
             # No Credentials found

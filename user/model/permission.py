@@ -49,12 +49,14 @@ class Permission(db.Model, BaseMixin, TimestampMixin, UserMixin):
     __tablename__ = 'permissions'
 
     name = db.Column(db.String(), unique = True, nullable = False)
+    
+    key = db.Column(db.String(), unique = True, nullable = False)
 
-    create = db.Column(db.Boolean())
+    create = db.Column(db.Boolean(), default = False)
 
-    read = db.Column(db.Boolean())
+    read = db.Column(db.Boolean(), default = False)
 
-    update = db.Column(db.Boolean())
+    update = db.Column(db.Boolean(), default = False)
 
-    delete = db.Column(db.Boolean())
+    delete = db.Column(db.Boolean(), default = False)
 

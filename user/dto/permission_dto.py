@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Copyright Header Details
 
 Copyright
@@ -25,24 +27,18 @@ Project
         - User Service for Guya
 """
 
+from flask_restplus import Namespace, fields
 
-"""Package details
+from user.blueprint.v1.permission import namespace
 
-Application features:
---------------------
-    Python 3.7
-    Flask
-    PEP-8 for code style
+class PermissionDto:
+    """Request and Respons Data Transfer Object."""
 
-
-Blueprint to organize and group, views related
-to the '/credentials' endpoint of HTTP REST API.
-"""
-
-from flask_restplus import Namespace
-
-from . import api
-
-namespace = Namespace('Credential', description = 'Credential API')
-
-api.add_namespace(namespace, path = '/api/v1/credentials')
+    request = namespace.model('permission_request', {
+        'name': fields.String(),
+        'key': fields.String(),
+        'create': fields.Boolean(),
+        'read': fields.Boolean(),
+        'update': fields.Boolean(),
+        'delete': fields.Boolean()
+    })

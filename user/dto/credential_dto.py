@@ -36,9 +36,9 @@ from user.blueprint.v1.user import namespace
 class CredentialDto:
     """Request and Respons Data Transfer Object."""
 
-    request = namespace.model('user_request', {
+    request = namespace.model('credential_request', {
         'identity': fields.String(),
         'password': fields.String()
     })
 
-    response = namespace.model('user_response', {})
+    response = namespace.model('credential_response', {})

@@ -36,13 +36,13 @@ Application features:
 
 
 Blueprint to organize and group, views related
-to the '/credentials' endpoint of HTTP REST API.
+to the '/foo' endpoint of HTTP REST API.
 """
 
 from flask_restplus import Namespace
 
 from . import api
 
-namespace = Namespace('Credential', description = 'Credential API')
+namespace = Namespace('Permission', description = 'Permission Api')
 
-api.add_namespace(namespace, path = '/api/v1/credentials')
+api.add_namespace(namespace, path = '/api/v1/permissions')
