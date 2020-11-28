@@ -320,10 +320,22 @@ class PermissionResource(Resource):
 
         name = namespace.payload['name']
         key = namespace.payload['key']
-        create = namespace.payload['create']
-        read = namespace.payload['read']
-        update = namespace.payload['update']
-        delete = namespace.payload['delete']
+        if "create" in namespace.payload:
+            create = namespace.payload['create']
+        else:
+            create = False
+        if "read" in namespace.payload:
+            read = namespace.payload['read']
+        else:
+            read = False
+        if "update" in namespace.payload:
+            update = namespace.payload['update']
+        else:
+            update = False
+        if "delete" in namespace.payload:
+            delete = namespace.payload["delete"] 
+        else:
+            delete = False
 
         ## Permission model
         permission = Permission(
@@ -428,11 +440,23 @@ class PermissionResource(Resource):
 
         name = namespace.payload['name']
         key = namespace.payload['key']
-        create = namespace.payload['create']
-        read = namespace.payload['read']
-        update = namespace.payload['update']
-        delete = namespace.payload['delete']
-
+        if "create" in namespace.payload:
+            create = namespace.payload['create']
+        else:
+            create = False
+        if "read" in namespace.payload:
+            read = namespace.payload['read']
+        else:
+            read = False
+        if "update" in namespace.payload:
+            update = namespace.payload['update']
+        else:
+            update = False
+        if "delete" in namespace.payload:
+            delete = namespace.payload["delete"] 
+        else:
+            delete = False
+        
         ## Update a record
         permission = db.session.query(Permission).get(id)
 
