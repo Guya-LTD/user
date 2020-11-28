@@ -40,6 +40,7 @@ class TestCredentialPersistences():
         self.session = Session()
         # init faker object
         self.faker = Faker()
+        sdf
 
     #def test_credential_creation(self):
         #credential = CredentialFactory()
