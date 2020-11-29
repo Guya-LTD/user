@@ -42,6 +42,7 @@ responsible for initializing the application according
 to a previous configuration.
 """
 
+import json
 import requests
 from flask import jsonify, make_response
 
@@ -74,8 +75,8 @@ class JWTAuthMiddleWare(object):
                 'Authorization': authorization
             }
             # Make request to gatekeeper and decode jwt token
-            gatekeeper_request = requests.get(
-                self.endpoint.gatekeeper('sessions/'),
+            gatekeeper_request = requests.post(
+                self.endpoint.gatekeeper('sessions/0'),
                 headers = headers
             )
             # Check if jwt decoding is sucessful
@@ -88,6 +89,15 @@ class JWTAuthMiddleWare(object):
                     'status_code': gatekeeper_request.status_code,
                     'status': "",
                     'message': "Jwt Middleware",
-                    'error': {}
+                    'error': {
+                        "requests": {
+                            "gatekeeper": {
+                                "method": "POST",
+                                "endpoint": self.endpoint.gatekeeper('sessions/0'),
+                                "headers": headers,
+                                "content": json.loads(gatekeeper_request.text) #gatekeeper_request.content.json()
+                            }
+                        }
+                    }
                 }), gatekeeper_request.status_code)
                 return False
