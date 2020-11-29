@@ -28,7 +28,7 @@ Project
 """
 
 from user.database import db
-
+from sqlalchemy.dialects.postgresql import JSONB
 
 from .mixins.base_mixin import BaseMixin
 from .mixins.timestamp_mixin import TimestampMixin
@@ -48,6 +48,12 @@ class PermissionRole(db.Model, BaseMixin, TimestampMixin, UserMixin):
 
     __tablename__ = 'permission_roles'
 
-    permission_id = db.Column(db.String(), nullable = False)
+    #permission_id = db.Column(db.String(), nullable = False)
 
-    role_id = db.Column(db.String(), nullable = False)
+    #role_id = db.Column(db.String(), nullable = False)
+
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+    permissions = db.Column(JSONB)
+
+    

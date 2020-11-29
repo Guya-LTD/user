@@ -50,5 +50,9 @@ class PermissionSchema(ma.Schema):
             "create",
             "read",
             "update",
-            "delete"
+            "delete",
+            "created_at",
+            "created_by",
+            "updated_at",
+            "updated_by"
         ]

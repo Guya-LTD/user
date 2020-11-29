@@ -301,21 +301,17 @@ class PermissionResource(Resource):
 
         """
         ## MiddleWare
-        #jwtAuthMiddleWare = JWTAuthMiddleWare(request)
-        #auth = jwtAuthMiddleWare.authorize()
+        jwtAuthMiddleWare = JWTAuthMiddleWare(request)
+        auth = jwtAuthMiddleWare.authorize() 
         # If auth is false break and return response to client
         # Else jwtAuthMiddleWare holds decoded users data
-        #if not auth:
-        #    return jwtAuthMiddleWare.response
+        if not auth:
+            return jwtAuthMiddleWare.response
 
         ## Start by validation request fields for extra security
         ## Step 1 validation: strip payloads for empty string
         if not namespace.payload['name'].strip() or \
            not namespace.payload['key'].strip():
-           #not namespace.payload['create'].strip() or \
-           #not namespace.payload['read'].strip() or \
-           #not namespace.payload['update'].strip() or \
-           #not namespace.payload['delete'].strip():
            raise ValueEmpty({'payload': namespace.payload})
 
         name = namespace.payload['name']
@@ -345,7 +341,7 @@ class PermissionResource(Resource):
             read = read,
             update = update,
             delete = delete,
-            created_by = "2"
+            created_by = jwtAuthMiddleWare.user.id
         )
 
         ## Create database session
@@ -432,6 +428,14 @@ class PermissionResource(Resource):
             Json Dictionaries
 
         """
+        ## MiddleWare
+        jwtAuthMiddleWare = JWTAuthMiddleWare(request)
+        auth = jwtAuthMiddleWare.authorize() 
+        # If auth is false break and return response to client
+        # Else jwtAuthMiddleWare holds decoded users data
+        if not auth:
+            return jwtAuthMiddleWare.response
+            
         ## Start by validation request fields for extra security
         ## Step 1 validation: strip payloads for empty string
         if not namespace.payload['name'].strip() or \

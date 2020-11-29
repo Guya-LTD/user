@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Copyright Header Details
 
 Copyright
@@ -25,24 +27,26 @@ Project
         - User Service for Guya
 """
 
-
-"""Package details
-
-Application features:
---------------------
-    Python 3.7
-    Flask
-    PEP-8 for code style
+"""Marshmallow SQLAlchemy Serializer class."""
 
 
-Blueprint to organize and group, views related
-to the '/foo' endpoint of HTTP REST API.
-"""
+from user.marshmallow_serializer import ma
 
-from flask_restplus import Namespace
+class RoleSchema(ma.Schema):
+    """Json serializer
 
-from . import api
+    """
 
-namespace = Namespace('User', description = 'User')
+    class Meta:
+        """Serializable Fields
 
-api.add_namespace(namespace, path = '/api/v1/users')
+        """
+        ## Fields to expose
+        fields = [
+            "name",
+            "uti",
+            "created_at",
+            "created_by",
+            "updated_at",
+            "updated_by"
+        ]

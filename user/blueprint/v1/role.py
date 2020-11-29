@@ -43,6 +43,6 @@ from flask_restplus import Namespace
 
 from . import api
 
-namespace = Namespace('User', description = 'User')
+namespace = Namespace('Role', description = 'Role Api')
 
-api.add_namespace(namespace, path = '/api/v1/users')
+api.add_namespace(namespace, path = '/api/v1/roles')

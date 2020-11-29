@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """Copyright Header Details
 
 Copyright
@@ -25,24 +27,14 @@ Project
         - User Service for Guya
 """
 
+from flask_restplus import Namespace, fields
 
-"""Package details
+from user.blueprint.v1.role import namespace
 
-Application features:
---------------------
-    Python 3.7
-    Flask
-    PEP-8 for code style
+class RoleDto:
+    """Request and Respons Data Transfer Object."""
 
-
-Blueprint to organize and group, views related
-to the '/foo' endpoint of HTTP REST API.
-"""
-
-from flask_restplus import Namespace
-
-from . import api
-
-namespace = Namespace('User', description = 'User')
-
-api.add_namespace(namespace, path = '/api/v1/users')
+    request = namespace.model('role_request', {
+        "name": fields.String(),
+        "uti": fields.String()
+    })
