@@ -29,7 +29,7 @@ Project
 
 from flask_restplus import Namespace, fields
 
-from user.blueprint.v1.permission import namespace
+from user.blueprint.v1.permission_role import namespace
 
 class PermissionRoleDto:
     """Request and Respons Data Transfer Object."""

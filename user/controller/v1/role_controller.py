@@ -316,11 +316,13 @@ class RoleResource(Resource):
 
         name = namespace.payload['name']
         uti = namespace.payload['uti']
+        permissions = namespace.payload['permissions']
 
         ## Role model
         role = Role(
             name = name,
             uti = uti,
+            permissions = permissions,
             created_by = "1" #jwtAuthMiddleWare.user.id
         )
 

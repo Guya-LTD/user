@@ -32,7 +32,7 @@ Project
 
 from user.marshmallow_serializer import ma
 from user.serializer.credential_serializer import CredentialSchema
-
+from user.serializer.role_serializer import RoleSchema
 
 class UserSchema(ma.Schema):
     """Json serializer
@@ -40,6 +40,7 @@ class UserSchema(ma.Schema):
     """
 
     credential = ma.Nested(CredentialSchema)
+    role = ma.Nested(RoleSchema)
 
     class Meta:
         """ Serializable Fields
@@ -53,6 +54,8 @@ class UserSchema(ma.Schema):
             'email',
             'pnum',
             'credential',
+            'role',
+            'role_id',
             'created_at',
             'updated_at'
         ]

@@ -28,7 +28,7 @@ Project
 """
 
 from user.database import db
-
+from sqlalchemy.dialects.postgresql import JSONB
 
 from .mixins.base_mixin import BaseMixin
 from .mixins.timestamp_mixin import TimestampMixin
@@ -52,4 +52,8 @@ class Role(db.Model, BaseMixin, TimestampMixin, UserMixin):
 
     uti = db.Column(db.String(), unique = True, nullable = False)
 
+    permissions = db.Column(db.ARRAY(JSONB))    
+
     user_role = db.relationship('UserRole')
+
+    user = db.relationship('User')

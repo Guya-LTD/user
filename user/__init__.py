@@ -51,7 +51,7 @@ from .config import config_by_name
 from .handlers import register_handler
 
 # import all controllers
-from user.controller.v1 import user_controller, credential_controller, permission_controller, role_controller
+from user.controller.v1 import user_controller, credential_controller, permission_controller, role_controller, permission_role_controller
 
 # const vars
 __version__ = '0.3.5'

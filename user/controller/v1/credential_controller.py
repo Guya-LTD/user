@@ -214,7 +214,7 @@ class CredentialsRcesource(Resource):
 
     _LIMIT = 10
 
-    def get(self):
+    def post(self):
         """Get All/Semi datas from database
 
         ...
@@ -230,8 +230,8 @@ class CredentialsRcesource(Resource):
         """
         # This api serves as a login end point
 
-        identity = request.args.get('identity', '')
-        password = request.args.get('password', '')
+        identity = namespace.payload.get('identity', '')
+        password = namespace.payload.get('password', '')
 
         if not identity.strip() or \
            not password.strip():
@@ -241,7 +241,6 @@ class CredentialsRcesource(Resource):
         # featch everything
         # return a Query object
         credentials = db.session.query(Credential)
-
 
         credential = credentials.filter_by(identity = identity, password = password).one()
 
@@ -259,19 +258,3 @@ class CredentialsRcesource(Resource):
                 'status': 'OK',
                 'message': 'Credential matched'
             }), 200)
-
-
-        
-
-    
-    @namespace.expect(CredentialDto.request, validate = True)
-    def post(self):
-        """Save data/datas to database
-
-        ...
-
-        Returns
-        -------
-            Json Dictionaries
-
-        """

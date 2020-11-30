@@ -43,8 +43,10 @@ class RoleSchema(ma.Schema):
         """
         ## Fields to expose
         fields = [
+            "id",
             "name",
             "uti",
+            "permissions",
             "created_at",
             "created_by",
             "updated_at",

@@ -27,31 +27,28 @@ Project
         - User Service for Guya
 """
 
-from user.database import db
-from sqlalchemy.dialects.postgresql import JSONB
-
-from .mixins.base_mixin import BaseMixin
-from .mixins.timestamp_mixin import TimestampMixin
-from .mixins.user_mixin import UserMixin
+"""Marshmallow SQLAlchemy Serializer class."""
 
 
-class PermissionRole(db.Model, BaseMixin, TimestampMixin, UserMixin):
-    """Permission ORM
+from user.marshmallow_serializer import ma
 
-    ...
+class PermissionRoleSchema(ma.Schema):
+    """Json serializer
 
-    Attributes
-    ----------
-    __tablename__ : String
-        Table Name
     """
 
-    __tablename__ = 'permission_roles'
+    class Meta:
+        """Serializable Fields
 
-    #permission_id = db.Column(db.String(), nullable = False)
+        """
 
-    #role_id = db.Column(db.String(), nullable = False)
-
-    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
-
-    permissions = db.Column(JSONB)
+        ## Fields to expose
+        fields = [
+            "id",
+            "role_id",
+            "permissions",
+            "created_at",
+            "created_by",
+            "updated_at",
+            "updated_by"
+        ]

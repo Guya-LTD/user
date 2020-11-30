@@ -75,7 +75,11 @@ class User(db.Model, BaseMixin, UserMixin, TimestampMixin):
 
     credential = db.relationship('Credential', uselist=False, backref="user")#, lazy = 'select', backref=db.backref('credential', lazy='joined', uselist=False))
 
-    role = db.relationship('UserRole', uselist=False, back_populates='user')
+    #role = db.relationship('UserRole', uselist=False, back_populates='user')
+
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+
+    role = db.relationship('Role', back_populates='user', lazy='select')
 
     @validates('name')
     def validate_name(self, key, value):

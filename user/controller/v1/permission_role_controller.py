@@ -22,9 +22,9 @@ Project
     * Name: 
         - Guya E-commerce & Guya Express
     * Sub Project Name:
-        - User Service
+        - PermissionRole Service
     * Description
-        - User Service for Guya
+        - PermissionRole Service for Guya
 """
 
 
@@ -118,80 +118,15 @@ from flask import request, jsonify, make_response
 from flask_restplus import Resource
 
 from user.database import db
-from user.dto.user_dto import UserDto
+from user.dto.permission_role_dto import PermissionRoleDto
 from user.exception import ValueEmpty, DocumentDoesNotExist, InvalidPayload
-from user.blueprint.v1.user import namespace
-from user.serializer.user_serializer import UserSchema
-from user.model.user import User
-from user.model.credential import Credential
-from user.model.user_role import UserRole
-from user.model.role import Role
+from user.model.permission_role import PermissionRole
+from user.blueprint.v1.permission_role import namespace
+from user.serializer.permission_role_serializer import PermissionRoleSchema
+from user.middleware.jwt_auth_middleware import JWTAuthMiddleWare
 
 @namespace.route('')
-@namespace.response(100, 'Continue')
-@namespace.response(101, 'Switching Protocols')
-@namespace.response(102, 'Processing')
-@namespace.response(103, 'Early Hints (RFC 8297)')
-@namespace.response(200, 'Ok')
-@namespace.response(201, 'Created')
-@namespace.response(202, 'Accepted')
-@namespace.response(203, 'Non-Authoritative Information')
-@namespace.response(204, 'No Content')
-@namespace.response(205, 'Reset Content')
-@namespace.response(206, 'Partial Content')
-@namespace.response(207, 'Multi-Status')
-@namespace.response(208, 'Already Reported')
-@namespace.response(226, 'IM Used')
-@namespace.response(300, 'Multiple Choices')
-@namespace.response(301, 'Moved Permanently')
-@namespace.response(302, 'Found (Previously "Moved temporarily")')
-@namespace.response(303, 'See Other')
-@namespace.response(304, 'Not Modified')
-@namespace.response(305, 'Use Proxy')
-@namespace.response(306, 'Switch Proxy')
-@namespace.response(307, 'Temporary Redirect')
-@namespace.response(308, 'Permanent Redirect')
-@namespace.response(400, 'Bad  Request')
-@namespace.response(401, 'Unauthorized')
-@namespace.response(402, 'Payment Required')
-@namespace.response(403, 'Forbidden')
-@namespace.response(404, 'Not Found')
-@namespace.response(405, 'Method Not Allowed')
-@namespace.response(406, 'Not Acceptable')
-@namespace.response(407, 'Proxy Authentication Required')
-@namespace.response(408, 'Request Timeout')
-@namespace.response(409, 'Conflict')
-@namespace.response(410, 'Gone')
-@namespace.response(411, 'Length Required')
-@namespace.response(412, 'Precondition Failed')
-@namespace.response(413, 'Payload Too Large')
-@namespace.response(414, 'URI Too Long')
-@namespace.response(415, 'Unsupported Media Type')
-@namespace.response(416, 'Range Not Satisfiable')
-@namespace.response(417, 'Expection Failed')
-@namespace.response(418, 'I\'m a teapot')
-@namespace.response(421, 'Misdirected Request')
-@namespace.response(422, 'Unprocessable Entity ')
-@namespace.response(423, 'Locked')
-@namespace.response(424, 'Failed Dependency')
-@namespace.response(425, 'Too Early')
-@namespace.response(426, 'Upgrade Required')
-@namespace.response(428, 'Precondition Required')
-@namespace.response(429, 'Too Many Requests')
-@namespace.response(431, 'Request Header Fields Too Large')
-@namespace.response(451, 'Unavailable For Legal Reasons')
-@namespace.response(500, 'Internal Server Error')
-@namespace.response(501, 'Not Implemented')
-@namespace.response(502, 'Bad Gateway')
-@namespace.response(503, 'Service Unavaliable')
-@namespace.response(504, 'Gateway Timeout')
-@namespace.response(505, 'HTTP Version Not Supported')
-@namespace.response(506, 'Variant Also Negotiates')
-@namespace.response(507, 'Insufficent Storage')
-@namespace.response(508, 'Loop Detected')
-@namespace.response(510, 'Not Extended')
-@namespace.response(511, 'Network Authentication Required')
-class UsersResource(Resource):
+class PermissionRoleResource(Resource):
     """Foobar Related Operation
 
     ...
@@ -231,7 +166,6 @@ class UsersResource(Resource):
             Json Dictionaries
 
         """
-
         # Validate querys if existed
         # or set them to default value
         limit = int(request.args.get('limit', self._LIMIT))
@@ -244,7 +178,7 @@ class UsersResource(Resource):
         # Open database session
         # fetch everything
         # returns a Query object
-        users =  db.session.query(User)
+        permission_role_roles =  db.session.query(PermissionRole)
         #print(x.__dict__)
         # applay filtering to Query object
         # Filtering short url names with their corsponding mathematical symbole:
@@ -270,8 +204,7 @@ class UsersResource(Resource):
         # key : value
         filters = {
             'name' : request.args.get('name'),
-            'email' : request.args.get('email'),
-            'pnum' : request.args.get('pnum')
+            'key' : request.args.get('key')
         }
         # filter through the Query object and applay the filter
         for parent_key, parent_value in filters.items():
@@ -283,7 +216,7 @@ class UsersResource(Resource):
                         splited = child_value.split(':')
                         # check if filter operation is correct
                         if splited[0] in filter_operators:
-                            users = users.filter(
+                            permission_role_roles = permission_role_roles.filter(
                                 text(
                                     "(%s->> '%s') %s '%s'"
                                     % (parent_key, child_key, filter_operators[splited[0]], splited[1] )
@@ -296,13 +229,13 @@ class UsersResource(Resource):
                     splited = parent_value.split(':')
                     # check if filter operatior is correct
                     if splited[0] in filter_operators:
-                        users = users.filter(
+                        permission_role_roles = permission_role_roles.filter(
                             text(
                                 "%s %s '%s'"
                                 % (parent_key, child_key, filter_operators[splited[0]], splited[1] )
                             )
                         )
-        # user results
+        # permission_role_roles results
         # split multiple order bys
         if request.args.get('order_by'):
             order_bys = request.args.get('order_by').split(',')
@@ -315,25 +248,25 @@ class UsersResource(Resource):
                     elif value[0] == '-':
                         qs = '%s %s' % (splited[1], 'DESC')
                     #
-                    users = users.order_by(
+                    permission_role_roles = permission_role_roles.order_by(
                         text(
                             str(qs)
                         )
                     )
         else:
             # if there is no order Query, order by updated_at
-            users = users.order_by(
-                User.updated_at.desc()
+            permission_role_roles = permission_role_roles.order_by(
+                PermissionRole.updated_at.desc()
             )
 
         # applay limit to Query object
-        users = users.offset(offset)
+        permission_role_roles = permission_role_roles.offset(offset)
         # applay paging to Query object
-        users = users.limit(limit)
+        permission_role_roles = permission_role_roles.limit(limit)
         # Create multi-value schema support
-        users_schema = UserSchema(many = True)
+        permission_role_roles_schema = PermissionRoleSchema(many = True)
         # Serialized Query inorder to send it over network
-        serialized_users = users_schema.dump(users)
+        serialized_permission_role_roles = permission_role_roles_schema.dump(permission_role_roles)
         
         # Return must always include the global fileds :
         # Field           Datatype        Default         Description             Examples
@@ -346,17 +279,17 @@ class UsersResource(Resource):
         # datas           array/json      Null            results                 [ {Row 1}, {Row 2}, {Row 3}]
         return make_response(jsonify({
             'status_code': 200,
-            'status': 'Ok', 
-            'datas': serialized_users,
+            'status': 'Ok',
+            'data': serialized_permission_role_roles,
             "pagination": {
-                "count": db.session.query(User).count(),
+                "count": db.session.query(PermissionRole).count(),
                 "limit": limit,
                 "page": page
             }
         }), 200)
+        
 
-
-    @namespace.expect(UserDto.request, validate = False)
+    @namespace.expect(PermissionRoleDto.request, validate = False)
     def post(self):
         """Save data/datas to database
 
@@ -367,132 +300,45 @@ class UsersResource(Resource):
             Json Dictionaries
 
         """
-        # create new user
-        # start by validating request fields for extra security
-        # step 1 validation: strip payloads for empty string
-        if not namespace.payload['name'].strip() or \
-           not namespace.payload['identity'].strip() or \
-           not namespace.payload['password'].strip() or \
-           not namespace.payload['uti']:
+        ## MiddleWare
+        #jwtAuthMiddleWare = JWTAuthMiddleWare(request)
+        #auth = jwtAuthMiddleWare.authorize() 
+        # If auth is false break and return response to client
+        # Else jwtAuthMiddleWare holds decoded users data
+        #if not auth:
+        #    return jwtAuthMiddleWare.response
+
+        ## Start by validation request fields for extra security
+        ## Step 1 validation: strip payloads for empty string
+        if not namespace.payload['role_id'].strip() or \
+           not namespace.payload['permissions'].strip():
            raise ValueEmpty({'payload': namespace.payload})
 
-        email = namespace.payload['email']
-        pnum = namespace.payload['pnum']
+        role_id = namespace.payload['role_id']
+        permissions = namespace.payload['permissions']
 
-        #if '@' in namespace.payload['identity'] or not email:
-        #    email = namespace.payload['identity']
-        #elif not pnum:
-        #    pnum = namespace.payload['identity']
-
-        # User's credential
-        credential = Credential(
-            identity = namespace.payload['identity'],
-            password = namespace.payload['password']
+        ## PermissionRole model
+        permission_role = PermissionRole(
+            role_id = role_id,
+            permissions = permissions,
+            created_by = "0" #jwtAuthMiddleWare.user.id
         )
 
-        # User's role
-        # First check if uti exists in role and
-        # retive role id by uti
-        role = db.session.query(Role).filter_by(uti = namespace.payload['uti']).one()
-        if not role:
-            raise InvalidPayload({'payload': namespace.payload, 'invalidPayloadKeys': ['uti'], 'info': 'Uti not found in role table'})
-
-        # New User object
-        user = User(
-            name = namespace.payload['name'],
-            email = email,
-            pnum = pnum,
-            role_id = role.id,
-            credential = credential,
-            created_by = -1
-        )
-
-        db.session.add(user)
-        #db.session.add(credential)
-        # Assign new id
+        ## Create database session
+        db.session.add(permission_role)
+        ## Assign new id
         db.session.flush()
-        # Presist to the database
+        ## Presist to the database
         db.session.commit()
 
-        # Return must always include the global fileds :
-        # Field           Datatype        Default         Description             Examples
-        # -----           --------        -------         -----------             --------
-        # code            int             201             1xx, 2xx, 3xx, 5xx
-        # description     string          Created         http code description
-        # messages        array           Null            any type of messages
-        # errors          array           Null            occured errors
-        # warnings        array           Null            can be url format
-        # datas           array/json      Null            results                 [ {Row 1}, {Row 2}, {Row 3}]
         return make_response(jsonify({
             'status_code': 201,
             'status': 'Created'
-        }), 200)
+        }), 201)
+
 
 @namespace.route('/<string:id>')
-@namespace.response(100, 'Continue')
-@namespace.response(101, 'Switching Protocols')
-@namespace.response(102, 'Processing')
-@namespace.response(103, 'Early Hints (RFC 8297)')
-@namespace.response(200, 'Ok')
-@namespace.response(201, 'Created')
-@namespace.response(202, 'Accepted')
-@namespace.response(203, 'Non-Authoritative Information')
-@namespace.response(204, 'No Content')
-@namespace.response(205, 'Reset Content')
-@namespace.response(206, 'Partial Content')
-@namespace.response(207, 'Multi-Status')
-@namespace.response(208, 'Already Reported')
-@namespace.response(226, 'IM Used')
-@namespace.response(300, 'Multiple Choices')
-@namespace.response(301, 'Moved Permanently')
-@namespace.response(302, 'Found (Previously "Moved temporarily")')
-@namespace.response(303, 'See Other')
-@namespace.response(304, 'Not Modified')
-@namespace.response(305, 'Use Proxy')
-@namespace.response(306, 'Switch Proxy')
-@namespace.response(307, 'Temporary Redirect')
-@namespace.response(308, 'Permanent Redirect')
-@namespace.response(400, 'Bad  Request')
-@namespace.response(401, 'Unauthorized')
-@namespace.response(402, 'Payment Required')
-@namespace.response(403, 'Forbidden')
-@namespace.response(404, 'Not Found')
-@namespace.response(405, 'Method Not Allowed')
-@namespace.response(406, 'Not Acceptable')
-@namespace.response(407, 'Proxy Authentication Required')
-@namespace.response(408, 'Request Timeout')
-@namespace.response(409, 'Conflict')
-@namespace.response(410, 'Gone')
-@namespace.response(411, 'Length Required')
-@namespace.response(412, 'Precondition Failed')
-@namespace.response(413, 'Payload Too Large')
-@namespace.response(414, 'URI Too Long')
-@namespace.response(415, 'Unsupported Media Type')
-@namespace.response(416, 'Range Not Satisfiable')
-@namespace.response(417, 'Expection Failed')
-@namespace.response(418, 'I\'m a teapot')
-@namespace.response(421, 'Misdirected Request')
-@namespace.response(422, 'Unprocessable Entity ')
-@namespace.response(423, 'Locked')
-@namespace.response(424, 'Failed Dependency')
-@namespace.response(425, 'Too Early')
-@namespace.response(426, 'Upgrade Required')
-@namespace.response(428, 'Precondition Required')
-@namespace.response(429, 'Too Many Requests')
-@namespace.response(431, 'Request Header Fields Too Large')
-@namespace.response(451, 'Unavailable For Legal Reasons')
-@namespace.response(500, 'Internal Server Error')
-@namespace.response(501, 'Not Implemented')
-@namespace.response(502, 'Bad Gateway')
-@namespace.response(503, 'Service Unavaliable')
-@namespace.response(504, 'Gateway Timeout')
-@namespace.response(505, 'HTTP Version Not Supported')
-@namespace.response(506, 'Variant Also Negotiates')
-@namespace.response(507, 'Insufficent Storage')
-@namespace.response(508, 'Loop Detected')
-@namespace.response(510, 'Not Extended')
-@namespace.response(511, 'Network Authentication Required')
-class UserResource(Resource):
+class PermissionRoleResource(Resource):
     """"Single Foobar Related Operation
 
     ...
@@ -525,42 +371,28 @@ class UserResource(Resource):
             Json Dictionaries
 
         """
-        # Open database session
-        # fetch everything
-        # returns a Query object
-        user =  db.session.query(User).get(id)
-        print(user.__dict__)
-        # Create schema support
-        users_schema = UserSchema()
-        # Serialized Query inorder to send it over network
-        serialized_users = users_schema.dump(user)
+        ## Open database session
+        permission_role = db.session.query(PermissionRole).get(id)
+        ## Create schema support
+        permission_role_schema = PermissionRoleSchema()
+        ## Object serializer
+        serialized_permission_role = permission_role_schema.dump(permission_role)
+        ## Check if content found
+        if not serialized_permission_role:
+            ## No Content Found
+            return make_response(jsonify({
+                "status_code": 204,
+                "status": "No Content",
+                "payload": {"id": id}
+            }))
+        else:
+            ## Content Found
+            return make_response(jsonify({
+                "status_code": 200,
+                "status": "Ok",
+                "data": serialized_permission_role
+            }))
 
-        # Return must always include the global fileds :
-        # Field           Datatype        Default         Description             Examples
-        # -----           --------        -------         -----------             --------
-        # code            int             201             1xx, 2xx, 3xx, 5xx
-        # description     string          Created         http code description
-        # messages        array           Null            any type of messages
-        # errors          array           Null            occured errors
-        # warnings        array           Null            can be url format
-        # datas           array/json      Null            results                 [ {Row 1}, {Row 2}, {Row 3}]
-        code = 200
-        description = 'OK'
-
-        if not serialized_users:
-            code = 204
-            description = 'No Content'
-
-        return make_response(jsonify({
-            'code': code,
-            'description': description,
-            'message': '',
-            'errors': [],
-            'warnings': [],
-            'datas': serialized_users
-        }), code)
-
-    @namespace.expect(UserDto.request, validate = True)
     def put(self, id):
         """Update a data from database
 
@@ -576,3 +408,60 @@ class UserResource(Resource):
             Json Dictionaries
 
         """
+        ## MiddleWare
+        jwtAuthMiddleWare = JWTAuthMiddleWare(request)
+        auth = jwtAuthMiddleWare.authorize() 
+        # If auth is false break and return response to client
+        # Else jwtAuthMiddleWare holds decoded users data
+        if not auth:
+            return jwtAuthMiddleWare.response
+            
+        ## Start by validation request fields for extra security
+        ## Step 1 validation: strip payloads for empty string
+        if not namespace.payload['name'].strip() or \
+           not namespace.payload['key'].strip():
+           raise ValueEmpty({'payload': namespace.payload})
+
+        name = namespace.payload['name']
+        key = namespace.payload['key']
+        if "create" in namespace.payload:
+            create = namespace.payload['create']
+        else:
+            create = False
+        if "read" in namespace.payload:
+            read = namespace.payload['read']
+        else:
+            read = False
+        if "update" in namespace.payload:
+            update = namespace.payload['update']
+        else:
+            update = False
+        if "delete" in namespace.payload:
+            delete = namespace.payload["delete"] 
+        else:
+            delete = False
+        
+        ## Update a record
+        permission_role = db.session.query(PermissionRole).get(id)
+
+        if not permission_role:
+            ## No Data found return no content
+            return make_response(jsonify({
+                "status_code": 204,
+                "status": "No Content",
+                "payload": {"id": id}
+            }))
+        else:
+            ## Content updated
+            permission_role.name = name
+            permission_role.key = key
+            permission_role.create = create
+            permission_role.read = read
+            permission_role.update = update
+            permission_role.delete = delete
+            ## Presist to the database
+            db.session.commit()
+            return make_response(jsonify({
+                "status_code": 200,
+                "status": "Ok"
+            }))

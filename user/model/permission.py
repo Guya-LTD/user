@@ -59,4 +59,3 @@ class Permission(db.Model, BaseMixin, TimestampMixin, UserMixin):
     update = db.Column(db.Boolean(), default = False)
 
     delete = db.Column(db.Boolean(), default = False)
-

@@ -373,11 +373,13 @@ class UsersResource(Resource):
         if not namespace.payload['name'].strip() or \
            not namespace.payload['identity'].strip() or \
            not namespace.payload['password'].strip() or \
+           not namespace.payload['role_id'].strip() or \
            not namespace.payload['uti']:
            raise ValueEmpty({'payload': namespace.payload})
 
         email = namespace.payload['email']
         pnum = namespace.payload['pnum']
+        role_id = namespace.payload['role_id']
 
         #if '@' in namespace.payload['identity'] or not email:
         #    email = namespace.payload['identity']
@@ -397,12 +399,18 @@ class UsersResource(Resource):
         if not role:
             raise InvalidPayload({'payload': namespace.payload, 'invalidPayloadKeys': ['uti'], 'info': 'Uti not found in role table'})
 
+        # User's Role object
+        user_role = UserRole(
+            role_id = role.id,
+            created_by = -1
+        )
+
         # New User object
         user = User(
             name = namespace.payload['name'],
             email = email,
             pnum = pnum,
-            role_id = role.id,
+            role = user_role,
             credential = credential,
             created_by = -1
         )
