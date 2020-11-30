@@ -22,9 +22,9 @@ Project
     * Name: 
         - Guya E-commerce & Guya Express
     * Sub Project Name:
-        - User Service
+        - Branch Service
     * Description
-        - User Service for Guya
+        - Branch location and details service
 """
 
 
@@ -56,14 +56,17 @@ logger = logging.getLogger(__name__)
 
 # logger handler
 logger.addHandler(
-    logstash.LogstashHandler(
+    logstash.TCPLogstashHandler(
+        #"logstash-logstash.guya-ltd-elk.svc.cluster.local",
+        #5400, 
         os.getenv('LOGGING_HOST'),
         os.getenv('LOGGING_PORT'), 
-        version=1)
+        version=1
     )
-
+)
 
 def log_exception(error, extra) -> None:
-    # recommanded for production or either the logging servier is running
-    # logger.exception(str(error), extra = __extra__.update(extra))
-    pass
+    myextra = __extra__
+    myextra.update(extra)
+    # recommanded for production or eithre the logging servier is running
+    logger.exception(str(error), extra = myextra)

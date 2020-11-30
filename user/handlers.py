@@ -111,7 +111,7 @@ def register_handler(app):
         result = {
             'status_code': 500, 
             'status': 'Internal Server Error', 
-            'message': 'Sqlalchemy Error',
+            'extra_message': 'Sqlalchemy Error',
             'error': custome_error
         }
 
