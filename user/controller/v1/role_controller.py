@@ -317,7 +317,6 @@ class RoleResource(Resource):
         name = namespace.payload['name']
         uti = namespace.payload['uti']
         permissions = namespace.payload['permissions']
-
         ## Role model
         role = Role(
             name = name,
@@ -448,3 +447,13 @@ class RoleResource(Resource):
                 "status_code": 200,
                 "status": "Ok"
             }))
+
+    def delete(self, id):
+        db.session.query(Role).filter(Role.id == id).delete()
+        ## Presist to the database
+        db.session.commit()
+
+        return make_response(jsonify({
+            'status_code': 200,
+            'status': 'Deleted'
+        }), 200)
