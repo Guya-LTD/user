@@ -122,8 +122,9 @@ from user.dto.credential_dto import CredentialDto
 from user.exception import ValueEmpty
 from user.blueprint.v1.credential import namespace
 from user.model.credential import Credential
-
-
+from user.model.user import User
+from user.serializer.user_serializer import UserSchema
+ 
 @namespace.route('')
 class CredentialsRcesource(Resource):
     """Foobar Related Operation
@@ -162,7 +163,6 @@ class CredentialsRcesource(Resource):
             Json Dictionaries
 
         """
-        print("+++++++++++++++++++++++++++++++++++++++++++++++++", namespace.payload)
         # This api serves as a login end point
         if not namespace.payload["identity"].strip() or \
            not namespace.payload["password"].strip():
@@ -170,18 +170,25 @@ class CredentialsRcesource(Resource):
 
         identity = namespace.payload["identity"]
         password = namespace.payload["password"]
-        
+
         ## Check if recored exists
         exists = db.session.query(
             db.session.query(Credential).filter_by(identity = identity, password = password).exists()
         ).scalar()
 
         if(exists):
-            #credentials = db.session.query(Credential)
-            #credential = credentials.filter_by(identity = identity, password = password).one()
+            credential = db.session.query(Credential).filter_by(identity = identity, password = password).one()
+            # User
+            user =  db.session.query(User).get(credential.user_id)
+            # Create schema support
+            users_schema = UserSchema()
+            # Serialized Query inorder to send it over network
+            serialized_users = users_schema.dump(user)
+
             return make_response(jsonify({
                 'status_code': 200,
                 'status': 'OK',
+                'data': serialized_users,
                 'message': 'Credential matched'
             }), 200)
         else:
