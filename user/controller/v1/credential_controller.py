@@ -125,69 +125,6 @@ from user.model.credential import Credential
 
 
 @namespace.route('')
-@namespace.response(100, 'Continue')
-@namespace.response(101, 'Switching Protocols')
-@namespace.response(102, 'Processing')
-@namespace.response(103, 'Early Hints (RFC 8297)')
-@namespace.response(200, 'Ok')
-@namespace.response(201, 'Created')
-@namespace.response(202, 'Accepted')
-@namespace.response(203, 'Non-Authoritative Information')
-@namespace.response(204, 'No Content')
-@namespace.response(205, 'Reset Content')
-@namespace.response(206, 'Partial Content')
-@namespace.response(207, 'Multi-Status')
-@namespace.response(208, 'Already Reported')
-@namespace.response(226, 'IM Used')
-@namespace.response(300, 'Multiple Choices')
-@namespace.response(301, 'Moved Permanently')
-@namespace.response(302, 'Found (Previously "Moved temporarily")')
-@namespace.response(303, 'See Other')
-@namespace.response(304, 'Not Modified')
-@namespace.response(305, 'Use Proxy')
-@namespace.response(306, 'Switch Proxy')
-@namespace.response(307, 'Temporary Redirect')
-@namespace.response(308, 'Permanent Redirect')
-@namespace.response(400, 'Bad  Request')
-@namespace.response(401, 'Unauthorized')
-@namespace.response(402, 'Payment Required')
-@namespace.response(403, 'Forbidden')
-@namespace.response(404, 'Not Found')
-@namespace.response(405, 'Method Not Allowed')
-@namespace.response(406, 'Not Acceptable')
-@namespace.response(407, 'Proxy Authentication Required')
-@namespace.response(408, 'Request Timeout')
-@namespace.response(409, 'Conflict')
-@namespace.response(410, 'Gone')
-@namespace.response(411, 'Length Required')
-@namespace.response(412, 'Precondition Failed')
-@namespace.response(413, 'Payload Too Large')
-@namespace.response(414, 'URI Too Long')
-@namespace.response(415, 'Unsupported Media Type')
-@namespace.response(416, 'Range Not Satisfiable')
-@namespace.response(417, 'Expection Failed')
-@namespace.response(418, 'I\'m a teapot')
-@namespace.response(421, 'Misdirected Request')
-@namespace.response(422, 'Unprocessable Entity ')
-@namespace.response(423, 'Locked')
-@namespace.response(424, 'Failed Dependency')
-@namespace.response(425, 'Too Early')
-@namespace.response(426, 'Upgrade Required')
-@namespace.response(428, 'Precondition Required')
-@namespace.response(429, 'Too Many Requests')
-@namespace.response(431, 'Request Header Fields Too Large')
-@namespace.response(451, 'Unavailable For Legal Reasons')
-@namespace.response(500, 'Internal Server Error')
-@namespace.response(501, 'Not Implemented')
-@namespace.response(502, 'Bad Gateway')
-@namespace.response(503, 'Service Unavaliable')
-@namespace.response(504, 'Gateway Timeout')
-@namespace.response(505, 'HTTP Version Not Supported')
-@namespace.response(506, 'Variant Also Negotiates')
-@namespace.response(507, 'Insufficent Storage')
-@namespace.response(508, 'Loop Detected')
-@namespace.response(510, 'Not Extended')
-@namespace.response(511, 'Network Authentication Required')
 class CredentialsRcesource(Resource):
     """Foobar Related Operation
 
@@ -214,29 +151,26 @@ class CredentialsRcesource(Resource):
 
     _LIMIT = 10
 
+    @namespace.expect(CredentialDto.request, validate = False)
     def post(self):
-        """Get All/Semi datas from database
+        """Save data/datas to database
 
         ...
-
-        Query Examples:
-            * Filtering :
-                - name.en=eq:abc&name.am=neq:abc
 
         Returns
         -------
             Json Dictionaries
 
         """
+        print("+++++++++++++++++++++++++++++++++++++++++++++++++", namespace.payload)
         # This api serves as a login end point
+        if not namespace.payload["identity"].strip() or \
+           not namespace.payload["password"].strip():
+           raise ValueEmpty({'payload': namespace.payload})
 
-        identity = namespace.payload.get('identity', '')
-        password = namespace.payload.get('password', '')
-
-        if not identity.strip() or \
-           not password.strip():
-           raise ValueEmpty({'payload': {'identity': identity, 'password': password}})
-
+        identity = namespace.payload["identity"]
+        password = namespace.payload["password"]
+        
         ## Check if recored exists
         exists = db.session.query(
             db.session.query(Credential).filter_by(identity = identity, password = password).exists()
