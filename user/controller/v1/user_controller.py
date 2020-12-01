@@ -424,9 +424,9 @@ class UsersResource(Resource):
         # warnings        array           Null            can be url format
         # datas           array/json      Null            results                 [ {Row 1}, {Row 2}, {Row 3}]
         return make_response(jsonify({
-            'status_code': 200,
+            'status_code': 201,
             'status': 'Created'
-        }), 200)
+        }), 201)
 
 @namespace.route('/<string:id>')
 @namespace.response(100, 'Continue')
