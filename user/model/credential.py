@@ -67,6 +67,6 @@ class Credential(db.Model, BaseMixin, TimestampMixin):
 
     password = db.Column(db.String(), unique = False, nullable = True)
 
-    blocked = db.Column(db.Boolean())
+    blocked = db.Column(db.Boolean(), default = False)
 
     note = db.Column(db.Text(), nullable = True)
