@@ -116,6 +116,7 @@ Functions:
 
 from flask import request, jsonify, make_response
 from flask_restplus import Resource
+from sqlalchemy import text
 
 from user.database import db
 from user.dto.user_dto import UserDto
@@ -298,7 +299,7 @@ class UsersResource(Resource):
                         users = users.filter(
                             text(
                                 "%s %s '%s'"
-                                % (parent_key, child_key, filter_operators[splited[0]], splited[1] )
+                                % (parent_key, filter_operators[splited[0]], splited[1] )
                             )
                         )
         # user results

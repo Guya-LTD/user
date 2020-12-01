@@ -232,7 +232,7 @@ class PermissionResource(Resource):
                         permissions = permissions.filter(
                             text(
                                 "%s %s '%s'"
-                                % (parent_key, child_key, filter_operators[splited[0]], splited[1] )
+                                % (parent_key, filter_operators[splited[0]], splited[1] )
                             )
                         )
         # permissions results
