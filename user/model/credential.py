@@ -59,7 +59,7 @@ class Credential(db.Model, BaseMixin, TimestampMixin):
     __tablename__ = 'credential'
 
 
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
 
     #user = db.relationship('User', uselist=False)#, lazy = 'select', backref=db.backref('credential', lazy='joined'))
 

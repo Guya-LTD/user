@@ -237,24 +237,23 @@ class CredentialsRcesource(Resource):
            not password.strip():
            raise ValueEmpty({'payload': {'identity': identity, 'password': password}})
 
-        # Open database session
-        # featch everything
-        # return a Query object
-        credentials = db.session.query(Credential)
+        ## Check if recored exists
+        exists = db.session.query(
+            db.session.query(Credential).filter_by(identity = identity, password = password).exists()
+        ).scalar()
 
-        credential = credentials.filter_by(identity = identity, password = password).one()
-
-        if not credential:
-            # No Credentials found
-            # Return No Content Found
-            return make_response(jsonify({
-                'status_code': 204,
-                'status': 'No Content',
-                'message': 'No Credential Found for this user'
-            }), 204)
-        else:
+        if(exists):
+            #credentials = db.session.query(Credential)
+            #credential = credentials.filter_by(identity = identity, password = password).one()
             return make_response(jsonify({
                 'status_code': 200,
                 'status': 'OK',
                 'message': 'Credential matched'
             }), 200)
+        else:
+            print("Hello")
+            return make_response(jsonify({
+                'status_code': 204,
+                'status': 'No Content',
+                'message': 'No Credential Found for this user'
+            }), 204)

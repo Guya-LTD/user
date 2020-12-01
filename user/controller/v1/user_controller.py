@@ -124,7 +124,6 @@ from user.blueprint.v1.user import namespace
 from user.serializer.user_serializer import UserSchema
 from user.model.user import User
 from user.model.credential import Credential
-from user.model.user_role import UserRole
 from user.model.role import Role
 
 @namespace.route('')
@@ -424,7 +423,7 @@ class UsersResource(Resource):
         # warnings        array           Null            can be url format
         # datas           array/json      Null            results                 [ {Row 1}, {Row 2}, {Row 3}]
         return make_response(jsonify({
-            'status_code': 201,
+            'status_code': 200,
             'status': 'Created'
         }), 200)
 
@@ -529,7 +528,6 @@ class UserResource(Resource):
         # fetch everything
         # returns a Query object
         user =  db.session.query(User).get(id)
-        print(user.__dict__)
         # Create schema support
         users_schema = UserSchema()
         # Serialized Query inorder to send it over network
@@ -576,3 +574,13 @@ class UserResource(Resource):
             Json Dictionaries
 
         """
+
+    def delete(self, id):
+        db.session.query(User).filter(User.id == id).delete()
+        ## Presist to the database
+        db.session.commit()
+
+        return make_response(jsonify({
+            'status_code': 200,
+            'status': 'Deleted'
+        }), 200)

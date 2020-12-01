@@ -54,6 +54,4 @@ class Role(db.Model, BaseMixin, TimestampMixin, UserMixin):
 
     permissions = db.Column(db.ARRAY(JSONB))    
 
-    user_role = db.relationship('UserRole')
-
     user = db.relationship('User')

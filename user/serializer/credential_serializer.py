@@ -49,6 +49,7 @@ class CredentialSchema(ma.Schema):
             'identity',
             'blocked',
             'note',
+            'password',
             'credential'
             'created_at',
             'updated_at'

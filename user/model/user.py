@@ -73,7 +73,7 @@ class User(db.Model, BaseMixin, UserMixin, TimestampMixin):
 
     pnum = db.Column(db.String(13), unique = True, nullable = True)
 
-    credential = db.relationship('Credential', uselist=False, backref="user")#, lazy = 'select', backref=db.backref('credential', lazy='joined', uselist=False))
+    credential = db.relationship('Credential', uselist=False, backref="user", cascade='all, delete-orphan')#, lazy = 'select', backref=db.backref('credential', lazy='joined', uselist=False))
 
     #role = db.relationship('UserRole', uselist=False, back_populates='user')
 
@@ -81,11 +81,11 @@ class User(db.Model, BaseMixin, UserMixin, TimestampMixin):
 
     role = db.relationship('Role', back_populates='user', lazy='select')
 
-    @validates('name')
-    def validate_name(self, key, value):
-        if not re.match(self.__name_pattern, value):
-            raise ValueError('Name cannot contain illegal characters VALUE => %s' % value)
-        return value
+    #@validates('name')
+    #def validate_name(self, key, value):
+    #    if not re.match(self.__name_pattern, value):
+    #        raise ValueError('Name cannot contain illegal characters VALUE => %s' % value)
+    #    return value
 
     @validates('email')
     def validate_email(self, key, value):
