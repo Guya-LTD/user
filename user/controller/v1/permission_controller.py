@@ -301,12 +301,12 @@ class PermissionResource(Resource):
 
         """
         ## MiddleWare
-        jwtAuthMiddleWare = JWTAuthMiddleWare(request)
-        auth = jwtAuthMiddleWare.authorize() 
+        #jwtAuthMiddleWare = JWTAuthMiddleWare(request)
+        #auth = jwtAuthMiddleWare.authorize() 
         # If auth is false break and return response to client
         # Else jwtAuthMiddleWare holds decoded users data
-        if not auth:
-            return jwtAuthMiddleWare.response
+        #if not auth:
+        #    return jwtAuthMiddleWare.response
 
         ## Start by validation request fields for extra security
         ## Step 1 validation: strip payloads for empty string
@@ -341,7 +341,7 @@ class PermissionResource(Resource):
             read = read,
             update = update,
             delete = delete,
-            created_by = jwtAuthMiddleWare.user.id
+            created_by = "-1" #jwtAuthMiddleWare.user.id
         )
 
         ## Create database session

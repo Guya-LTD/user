@@ -323,7 +323,7 @@ class RoleResource(Resource):
             name = name,
             uti = uti,
             permissions = permissions,
-            created_by = "1" #jwtAuthMiddleWare.user.id
+            created_by = "-1" #jwtAuthMiddleWare.user.id
         )
 
         ## Create database session

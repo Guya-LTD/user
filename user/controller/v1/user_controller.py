@@ -347,7 +347,7 @@ class UsersResource(Resource):
         return make_response(jsonify({
             'status_code': 200,
             'status': 'Ok', 
-            'datas': serialized_users,
+            'data': serialized_users,
             "pagination": {
                 "count": db.session.query(User).count(),
                 "limit": limit,
@@ -556,7 +556,7 @@ class UserResource(Resource):
             'message': '',
             'errors': [],
             'warnings': [],
-            'datas': serialized_users
+            'data': serialized_users
         }), code)
 
     @namespace.expect(UserDto.request, validate = True)

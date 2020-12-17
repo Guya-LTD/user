@@ -67,14 +67,14 @@ def register_handler(app):
             result = {
                 'status_code': error.code, 
                 'status': '',
-                'message': error.description, 
+                'extra_message': error.description, 
                 'type': 'HTTPException',
                 'error': str(error.update({'type': 'HTTPException'}))}
         else:
             result = {
                 'status_code': 500,
                 'status': 'Internal Server Error',
-                'message': error.description,
+                'extra_message': error.description,
                 'error': str(error.update({'type': 'Other Exceptions'}))}
 
         logger.exception(str(error), extra=result.update(EXTRA))
