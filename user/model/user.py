@@ -69,9 +69,9 @@ class User(db.Model, BaseMixin, UserMixin, TimestampMixin):
 
     name = db.Column(db.String(), nullable = False)
 
-    email = db.Column(db.String(), unique = True, nullable = False)
+    email = db.Column(db.String()) #, unique = True, nullable = True)
 
-    pnum = db.Column(db.String(13), unique = True, nullable = True)
+    pnum = db.Column(db.String(13)) #, unique = True, nullable = True)
 
     credential = db.relationship('Credential', uselist=False, backref="user", cascade='all, delete-orphan')#, lazy = 'select', backref=db.backref('credential', lazy='joined', uselist=False))
 
@@ -89,6 +89,8 @@ class User(db.Model, BaseMixin, UserMixin, TimestampMixin):
 
     @validates('email')
     def validate_email(self, key, value):
+        if not value.strip():
+            return ""
         if not '@' in value or not value.strip():
             raise ValueError('Email Address must contain @ symbol or cannot be empty VALUE => %s' % value)
         else:
